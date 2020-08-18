@@ -1,0 +1,204 @@
+import time
+from sklearn import datasets
+import dash_core_components as dcc
+import dash_html_components as html
+import numpy as np
+from dash.dependencies import Input, Output, State
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from Layouts.figures_svm_component import serve_prediction_plot, serve_roc_curve, \
+    serve_pie_confusion_matrix
+from Controllers.statistics_controller import StatisticsController as StController, initialization
+
+
+from Layouts.app import app
+
+
+
+@app.callback(Output('slider-svm-parameter-gamma-coef', 'marks'),
+              [Input('slider-svm-parameter-gamma-power', 'value')])
+def update_slider_svm_parameter_gamma_coef(power):
+    scale = 10 ** power
+    return {i: str(round(i * scale, 8)) for i in range(1, 10, 2)}
+
+
+@app.callback(Output('slider-svm-parameter-C-coef', 'marks'),
+              [Input('slider-svm-parameter-C-power', 'value')])
+def update_slider_svm_parameter_C_coef(power):
+    scale = 10 ** power
+    return {i: str(round(i * scale, 8)) for i in range(1, 10, 2)}
+
+
+@app.callback(Output('slider-threshold', 'value'),
+              [Input('button-zero-threshold', 'n_clicks')],
+              [State('graph-sklearn-svm', 'figure')])
+def reset_threshold_center(n_clicks, figure):
+    if n_clicks:
+        Z = np.array(figure['data'][0]['z'])
+        value = - Z.min() / (Z.max() - Z.min())
+    else:
+        value = 0.4959986285375595
+    return value
+
+
+# Disable Sliders if kernel not in the given list
+@app.callback(Output('slider-svm-parameter-degree', 'disabled'),
+              [Input('dropdown-svm-parameter-kernel', 'value')])
+def disable_slider_param_degree(kernel):
+    return kernel != 'poly'
+
+
+@app.callback(Output('slider-svm-parameter-gamma-coef', 'disabled'),
+              [Input('dropdown-svm-parameter-kernel', 'value')])
+def disable_slider_param_gamma_coef(kernel):
+    return kernel not in ['rbf', 'poly', 'sigmoid']
+
+
+@app.callback(Output('slider-svm-parameter-gamma-power', 'disabled'),
+              [Input('dropdown-svm-parameter-kernel', 'value')])
+def disable_slider_param_gamma_power(kernel):
+    return kernel not in ['rbf', 'poly', 'sigmoid']
+
+
+@app.callback(Output('div-graphs', 'children'),
+              [Input('dropdown-svm-parameter-kernel', 'value'),
+               Input('slider-svm-parameter-degree', 'value'),
+               Input('slider-svm-parameter-C-coef', 'value'),
+               Input('slider-svm-parameter-C-power', 'value'),
+               Input('slider-svm-parameter-gamma-coef', 'value'),
+               Input('slider-svm-parameter-gamma-power', 'value'),
+               Input('radio-svm-parameter-shrinking', 'value'),
+               Input('slider-threshold', 'value'),
+               Input('dropdown-svm-parameter-X', 'value'),
+               Input('dropdown-svm-parameter-Y', 'value')
+               ])
+def update_svm_graph(kernel,
+                     degree,
+                     C_coef,
+                     C_power,
+                     gamma_coef,
+                     gamma_power,
+                     shrinking,
+                     threshold,
+                     titleX,
+                     titleY
+                     ):
+
+    t_start = time.time()
+    h = .3  # step size in the mesh
+    shrinking= bool(shrinking)
+    # Data Pre-processing
+    initialization()
+    y = initialization.df_data[titleY]
+    #df_X = data.get_df_X().drop([titleY], axis=1)
+    #X = df_X
+    dataset = datasets.make_moons(
+        n_samples=200,
+        noise=0.6,
+        random_state=0
+    )
+   # print(X)
+    X, y = dataset
+    X = StandardScaler().fit_transform(X) # Requere que tenga una matriz con nejemplos y n columnas
+
+    X_train, X_test, y_train, y_test = \
+        train_test_split(X, y, test_size=.4, random_state=42)
+
+    x_min = X[:, 0].min() - .5
+    x_max = X[:, 0].max() + .5
+    y_min = X[:, 1].min() - .5
+    y_max = X[:, 1].max() + .5
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
+                         np.arange(y_min, y_max, h))
+
+    C = C_coef * 10 ** C_power
+    gamma = gamma_coef * 10 ** gamma_power
+
+    # Train SVM
+    clf = SVC(
+        C=C,
+        kernel=kernel,
+        degree=degree,
+        gamma=gamma,
+        shrinking=shrinking
+    )
+    clf.fit(X_train, y_train)
+
+    # Plot the decision boundary. For that, we will assign a color to each
+    # point in the mesh [x_min, x_max]x[y_min, y_max].
+    # print(np.c_[xx.ravel(), yy.ravel()])
+    if hasattr(clf, "decision_function"):
+        Z = clf.decision_function(np.c_[xx.ravel(), yy.ravel()])
+    else:
+        Z = clf.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:, 1]
+
+    prediction_figure = serve_prediction_plot(
+        model=clf,
+        X_train=X_train,
+        X_test=X_test,
+        y_train=y_train,
+        y_test=y_test,
+        Z=Z,
+        xx=xx,
+        yy=yy,
+        mesh_step=h,
+        threshold=threshold
+    )
+
+    roc_figure = serve_roc_curve(
+        model=clf,
+        X_test=X_test,
+        y_test=y_test
+    )
+
+    confusion_figure = serve_pie_confusion_matrix(
+        model=clf,
+        X_test=X_test,
+        y_test=y_test,
+        Z=Z,
+        threshold=threshold
+    )
+
+    print(
+        f"Total Time Taken: {time.time() - t_start:.3f} sec")
+
+    return [
+        html.Div(
+            className='three columns',
+            style={
+                'min-width': '24.5%',
+                'height': 'calc(100vh - 90px)',
+                'margin-top': '5px',
+
+                # Remove possibility to select the text for better UX
+                'user-select': 'none',
+                '-moz-user-select': 'none',
+                '-webkit-user-select': 'none',
+                '-ms-user-select': 'none'
+            },
+            children=[
+                dcc.Graph(
+                    id='graph-line-roc-curve',
+                    style={'height': '40%'},
+                    figure=roc_figure
+                ),
+
+                dcc.Graph(
+                    id='graph-pie-confusion-matrix',
+                    figure=confusion_figure,
+                    style={'height': '60%'}
+                )
+            ]),
+
+        html.Div(
+            className='six columns',
+            style={'margin-top': '5px'},
+            children=[
+                dcc.Graph(
+                    id='graph-sklearn-svm',
+                    figure=prediction_figure,
+                    style={'height': 'calc(100vh - 90px)'}
+                )
+            ])
+    ]
