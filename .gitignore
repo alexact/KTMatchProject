@@ -98,9 +98,13 @@ venv/
 __pycache__/
 *.py[cod]
 *$py.class
+
 # End of https://www.gitignore.io/api/pycharm
 
 .env
 *.pyc
 #Heroku
 .DS_Store
+
+# End of https://www.gitignore.io/api/pycharm
+
