@@ -29,7 +29,7 @@ class DataModel:
         Recibe el archivo en formato csv de los resultados de la encuesta
         :return: Retorna el archivo con los puntajes de las ecuestas
         """
-        file = pd.read_csv('D:\IngenieriadeSistemas\TrabajodeGrado\dataInit.csv',
+        file = pd.read_csv('dataInit.csv',
                            encoding='unicode_escape')
         return file
 
@@ -38,6 +38,6 @@ class DataModel:
         Recibe el archivo en formato csv de los titulos para el nuevo DataFrame( se usa para los dropdown)
         :return: Retorna el archivo con los titulos
         """
-        file = pd.read_csv('D:\IngenieriadeSistemas\TrabajodeGrado\dataTituloVariables.csv',
+        file = pd.read_csv('dataTituloVariables.csv',
                            encoding='unicode_escape')
         return file

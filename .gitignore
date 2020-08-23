@@ -101,5 +101,6 @@ __pycache__/
 # End of https://www.gitignore.io/api/pycharm
 
 .env
+*.pyc
 #Heroku
 .DS_Store
