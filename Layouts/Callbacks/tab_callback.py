@@ -21,9 +21,9 @@ desc = Description( )
               [Input('tabs-with-classes', 'value')])
 def render_content(tab):
     if tab == 'tab-1':
-        return html.Div([
-            html.H3('Tab content 1')
-        ])
+        return [
+           desc.description_instruction()
+        ]
     elif tab == 'tab-2':
         card_graph = dbc.Card([dbc.CardHeader(html.H4("Correlación de variables para la severidad")),
                                dbc.CardBody(
@@ -59,6 +59,4 @@ def render_content(tab):
     elif tab == 'tab-3':
         return [upload_component( ), layout_SVM]
     elif tab == 'tab-4':
-        return html.Div([
-            html.H3('Tab content 4')
-        ])
+        return desc.description_about_app()

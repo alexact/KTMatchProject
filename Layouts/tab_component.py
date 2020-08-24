@@ -26,7 +26,7 @@ content_tab_layout = html.Div([
                 selected_className='custom-tab--selected'
             ),
             dcc.Tab(
-                label='Conclusiones',
+                label='Acerca de la app',
                 value='tab-4',
                 className='custom-tab',
                 selected_className='custom-tab--selected'
