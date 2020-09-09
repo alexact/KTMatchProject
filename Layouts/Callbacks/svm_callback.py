@@ -3,17 +3,17 @@ from sklearn import datasets
 import dash_core_components as dcc
 import dash_html_components as html
 import numpy as np
+import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
+from Model.data_model import DataModel
 from Layouts.figures_svm_component import serve_prediction_plot, serve_roc_curve, \
     serve_pie_confusion_matrix
 from Controllers.statistics_controller import StatisticsController as StController, initialization
 
-
 from Layouts.app import app
-
 
 
 @app.callback(Output('slider-svm-parameter-gamma-coef', 'marks'),
@@ -36,7 +36,7 @@ def update_slider_svm_parameter_C_coef(power):
 def reset_threshold_center(n_clicks, figure):
     if n_clicks:
         Z = np.array(figure['data'][0]['z'])
-        value = - Z.min() / (Z.max() - Z.min())
+        value = - Z.min( ) / (Z.max( ) - Z.min( ))
     else:
         value = 0.4959986285375595
     return value
@@ -84,31 +84,32 @@ def update_svm_graph(kernel,
                      titleX,
                      titleY
                      ):
-
-    t_start = time.time()
+    t_start = time.time( )
     h = .3  # step size in the mesh
-    shrinking= bool(shrinking)
+    shrinking = bool(shrinking)
     # Data Pre-processing
-    initialization()
+    initialization( )
     y = initialization.df_data[titleY]
-    #df_X = data.get_df_X().drop([titleY], axis=1)
-    #X = df_X
+    data = DataModel( )
+
+    # df_X = data.get_df_X().drop([titleY], axis=1)
+    # X = df_X
     dataset = datasets.make_moons(
         n_samples=200,
         noise=0.6,
         random_state=0
     )
-   # print(X)
+    # print(X)
     X, y = dataset
-    X = StandardScaler().fit_transform(X) # Requere que tenga una matriz con nejemplos y n columnas
+    X = StandardScaler( ).fit_transform(X)  # Requere que tenga una matriz con nejemplos y n columnas
 
     X_train, X_test, y_train, y_test = \
         train_test_split(X, y, test_size=.4, random_state=42)
 
-    x_min = X[:, 0].min() - .5
-    x_max = X[:, 0].max() + .5
-    y_min = X[:, 1].min() - .5
-    y_max = X[:, 1].max() + .5
+    x_min = X[:, 0].min( ) - .5
+    x_max = X[:, 0].max( ) + .5
+    y_min = X[:, 1].min( ) - .5
+    y_max = X[:, 1].max( ) + .5
     xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
                          np.arange(y_min, y_max, h))
 
@@ -129,9 +130,9 @@ def update_svm_graph(kernel,
     # point in the mesh [x_min, x_max]x[y_min, y_max].
     # print(np.c_[xx.ravel(), yy.ravel()])
     if hasattr(clf, "decision_function"):
-        Z = clf.decision_function(np.c_[xx.ravel(), yy.ravel()])
+        Z = clf.decision_function(np.c_[xx.ravel( ), yy.ravel( )])
     else:
-        Z = clf.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:, 1]
+        Z = clf.predict_proba(np.c_[xx.ravel( ), yy.ravel( )])[:, 1]
 
     prediction_figure = serve_prediction_plot(
         model=clf,
@@ -161,7 +162,7 @@ def update_svm_graph(kernel,
     )
 
     print(
-        f"Total Time Taken: {time.time() - t_start:.3f} sec")
+        f"Total Time Taken: {time.time( ) - t_start:.3f} sec")
 
     return [
         html.Div(
@@ -183,7 +184,21 @@ def update_svm_graph(kernel,
                     style={'height': '40%'},
                     figure=roc_figure
                 ),
-
+                html.Div(
+                    [
+                        dbc.Button(
+                            "Tips",
+                            id="collapse-button_confusion-matrix",
+                            className="mb-3",
+                            color="primary",
+                        ),
+                        dbc.Collapse(
+                            dbc.Card(dbc.CardBody("Busca que los porcentajes de Verdadero Positivo y "
+                                                  "Verdaderos Negativo sean los más altos")),
+                            id="collapse_tips_confusion-matrix",
+                        ),
+                    ]
+                ),
                 dcc.Graph(
                     id='graph-pie-confusion-matrix',
                     figure=confusion_figure,
@@ -202,3 +217,41 @@ def update_svm_graph(kernel,
                 )
             ])
     ]
+
+
+# Callbacks collapse
+
+@app.callback(
+    Output("collapse_tips_svm", "is_open"),
+    [Input("collapse-button_kernel", "n_clicks")],
+    [State("collapse_tips_svm", "is_open")]
+)
+def toggle_collapse_kernel(n, is_open):
+    print("isopen", is_open)
+    if n:
+        return not is_open
+    return is_open
+
+
+@app.callback(
+    Output("collapse_tips_confusion-matrix", "is_open"),
+    [Input("collapse-button_confusion-matrix", "n_clicks")],
+    [State("collapse_tips_confusion-matrix", "is_open")]
+)
+def toggle_collapse_confusion_matrix(n, is_open):
+    print("isopen2", is_open)
+    if n:
+        return not is_open
+    return is_open
+
+
+@app.callback(
+    Output("collapse_tips_variables", "is_open"),
+    [Input("collapse-button_variables", "n_clicks")],
+    [State("collapse_tips_variables", "is_open")]
+)
+def toggle_collapse_kernel(n, is_open):
+    print("isopen", is_open)
+    if n:
+        return not is_open
+    return is_open

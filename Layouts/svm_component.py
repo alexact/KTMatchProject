@@ -1,9 +1,9 @@
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_bootstrap_components as dbc
 import Layouts.components_view_svm as drc
 
 layout_SVM = html.Div(id='body', className='container scalable', children=[
-            html.Div(className='row', children=[
                 html.Div(
                     id='div-graphs',
                     children=dcc.Graph(
@@ -40,14 +40,31 @@ layout_SVM = html.Div(id='body', className='container scalable', children=[
                         ]),
 
                         drc.Card([
+                            html.Div(
+                                [
+                                    dbc.Button(
+                                        "Tips",
+                                        id="collapse-button_kernel",
+                                        className="mb-3",
+                                        color="primary",
+                                    ),
+                                    dbc.Collapse(
+                                        dbc.Card(dbc.CardBody("Cambia los kernel y selecciona el que clasifique en la "
+                                                              "gráfica del mapa de calor menos combinación entre los "
+                                                              "puntos de diferentes formas y colores. Apóyate en la "
+                                                              "matriz de confusión")),
+                                        id="collapse_tips_svm",
+                                    ),
+                                ]
+                            ),
                             drc.NamedDropdown(
                                 name='Kernel',
                                 id='dropdown-svm-parameter-kernel',
                                 options=[
-                                    {'label': 'Radial basis function (RBF)',
+                                    {'label': 'Función básica Radial (RBF)',
                                      'value': 'rbf'},
-                                    {'label': 'Linear', 'value': 'linear'},
-                                    {'label': 'Polynomial', 'value': 'poly'},
+                                    {'label': 'Lineal', 'value': 'linear'},
+                                    {'label': 'Polinomial', 'value': 'poly'},
                                     {'label': 'Sigmoid', 'value': 'sigmoid'}
                                 ],
                                 value='rbf',
@@ -118,5 +135,5 @@ layout_SVM = html.Div(id='body', className='container scalable', children=[
 
                     ]
                 ),
-            ]),
+
         ])

@@ -58,6 +58,11 @@ class StatisticsController( ):
         self.evaluate_data( )
 
     def get_graphs_dispersion(self, nameX, nameY):
+        """
+        :param nameX: nombre selecciona
+        :param nameY:
+        :return:
+        """
         df = StatisticsController.get_allData(data.df_X)
         df_dispersion = pd.merge(df[nameX], df[nameY], left_on=nameX, right_on=nameY)
         return df_dispersion

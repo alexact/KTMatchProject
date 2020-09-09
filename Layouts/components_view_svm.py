@@ -2,6 +2,7 @@ from textwrap import dedent
 
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_bootstrap_components as dbc
 from Model.data_service import Statistics
 
 
@@ -123,8 +124,26 @@ def DemoDescription(filename, strip=False):
 def card_dropdown():
     titles = Statistics( ).generate_titles( )
     return Card([
+        html.Div(
+            [
+                dbc.Button(
+                    "Tips",
+                    id="collapse-button_variables",
+                    className="mb-3",
+                    color="primary",
+                ),
+                dbc.Collapse(
+                    dbc.Card(dbc.CardBody("Las variables X son las que definen la clasificación"
+                                          " y la variable Y es el resultado de la clasificación. "
+                                          "El algoritmo SVM de acuerdo al comportamiento de los datos de entrada "
+                                          "intentará predecir para siguientes registros si con los datos de las "
+                                          "variables x el resultado de la variable Y es de 0 a 5")),
+                    id="collapse_tips_variables",
+                ),
+            ]
+        ),
                         NamedDropdown(
-                            name='Data X values ',
+                            name='Selecciona la variable X ',
                             id='dropdown-svm-parameter-X',
                             options=titles,
                             value=titles[0]['value'],
@@ -132,7 +151,7 @@ def card_dropdown():
                             searchable=False
                         ),
                         NamedDropdown(
-                            name='Select Predict Y values',
+                            name='Seleccione la variable Y a predecir',
                             id='dropdown-svm-parameter-Y',
                             options=titles,
                             value=titles[1]['value'],

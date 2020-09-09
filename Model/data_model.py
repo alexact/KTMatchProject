@@ -15,7 +15,7 @@ class DataModel:
     ))
 
     def __init__(self):
-        self.df_X = DataModel.x
+        self.df_X = DataModel.df_X
 
     def get_df_X(self):
         return self.df_X
@@ -40,4 +40,5 @@ class DataModel:
         """
         file = pd.read_csv('dataTituloVariables.csv',
                            encoding='unicode_escape')
+        print("TYPE FILE", type(file))
         return file

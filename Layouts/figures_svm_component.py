@@ -179,11 +179,11 @@ def serve_pie_confusion_matrix(model,
     tn, fp, fn, tp = matrix.ravel()
 
     values = [tp, fn, fp, tn]
-    label_text = ["True Positive",
-                  "False Negative",
-                  "False Positive",
-                  "True Negative"]
-    labels = ["TP", "FN", "FP", "TN"]
+    label_text = ["Verdadero Positivo",
+                  "Falso Negativo",
+                  "Falso Positivo",
+                  "Verdaderi¿o Negativo"]
+    labels = ["VP", "FN", "FP", "VN"]
     blue = cl.flipper()['seq']['9']['Blues']
     red = cl.flipper()['seq']['9']['Reds']
     colors = [blue[4], blue[1], red[1], red[4]]
@@ -201,7 +201,7 @@ def serve_pie_confusion_matrix(model,
     )
 
     layout = go.Layout(
-        title=f'Confusion Matrix',
+        title=f'Matriz de Confusión',
         margin=dict(l=10, r=10, t=60, b=10),
         legend=dict(
             bgcolor='rgba(255,255,255,0)',

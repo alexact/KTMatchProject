@@ -18,7 +18,8 @@ def update_table(children):
     :return:
     """
     if initialization.df_data is not None:
-        # table = dbc.Table.from_dataframe(initialization.df_frecuency.to_dict('records'), striped=True, bordered=True, hover=True, id='frec_table')
+        # table = dbc.Table.from_dataframe(initialization.df_frecuency.to_dict('records'), striped=True,
+        # bordered=True, hover=True, id='frec_table')
         return initialization.df_frecuency.to_dict('records'), StController.titles_frec
 
 
