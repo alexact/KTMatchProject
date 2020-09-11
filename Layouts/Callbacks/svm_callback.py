@@ -71,8 +71,10 @@ def disable_slider_param_gamma_power(kernel):
                Input('radio-svm-parameter-shrinking', 'value'),
                Input('slider-threshold', 'value'),
                Input('dropdown-svm-parameter-X', 'value'),
-               Input('dropdown-svm-parameter-Y', 'value')
-               ])
+               Input('dropdown-svm-parameter-Y', 'value'),
+               Input('output-data-uploads', 'children')
+               ],
+              [State('upload-datas', 'filename')])
 def update_svm_graph(kernel,
                      degree,
                      C_coef,
@@ -82,25 +84,35 @@ def update_svm_graph(kernel,
                      shrinking,
                      threshold,
                      titleX,
-                     titleY
+                     titleY, update, filename
                      ):
     t_start = time.time( )
     h = .3  # step size in the mesh
     shrinking = bool(shrinking)
     # Data Pre-processing
     initialization( )
-    y = initialization.df_data[titleY]
-    data = DataModel( )
+    # data = DataModel( )  # Se inicializa el objeto data
+    # df_X = data.get_df_X( )  # se llama al al dataFrame que se encuentra en el update
 
-    # df_X = data.get_df_X().drop([titleY], axis=1)
-    # X = df_X
-    dataset = datasets.make_moons(
-        n_samples=200,
-        noise=0.6,
-        random_state=0
-    )
-    # print(X)
-    X, y = dataset
+    # LA DATA NO ESTÁ LLEGANDO PORQUE NO LAHE LLAMADO DESDE EL CONTROLLER FALTA HACER UN METODO O VARIABLE GLOBAL QUE LO HAGA
+
+    df_X = StController.get_allData()
+    print("Datafame", df_X.head(3))
+    print(titleY in df_X.columns)
+    print("Titulo a quitar del dataframe", titleY)
+    if titleY in df_X.columns:
+        print("si entro al def_X en svm callback")
+        y = initialization.df_data[titleY]
+        X = df_X.drop([titleY], axis=1)
+    else:
+        print("No entro al def_X en svm callback")
+        dataset = datasets.make_moons(
+            n_samples=200,
+            noise=0.6,
+            random_state=0
+        )
+        X, y = dataset
+    # print(" xxxxx ",X, " yyyy ", y)
     X = StandardScaler( ).fit_transform(X)  # Requere que tenga una matriz con nejemplos y n columnas
 
     X_train, X_test, y_train, y_test = \

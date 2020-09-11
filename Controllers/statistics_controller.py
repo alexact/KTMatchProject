@@ -52,9 +52,9 @@ class StatisticsController( ):
         initialization.df_data = s.gerenation_df_severity(0, data_upload)
         initialization.df_frecuency = s.frecuency_table(initialization.df_data)
         initialization.df_impact = s.generation_df_impact(0, data_upload)
-        print("IMPACTO ",initialization.df_impact)
+        # print("IMPACTO ",initialization.df_impact)
         initialization.df_data_frecuency =s.generation_df_frecuency(0, data_upload)
-        print("FRECUENCIAAA ", initialization.df_data_frecuency)
+        # print("FRECUENCIAAA ", initialization.df_data_frecuency)
         self.evaluate_data( )
 
     def get_graphs_dispersion(self, nameX, nameY):

@@ -40,5 +40,5 @@ class DataModel:
         """
         file = pd.read_csv('dataTituloVariables.csv',
                            encoding='unicode_escape')
-        print("TYPE FILE", type(file))
+        # print("TYPE FILE", type(file))
         return file
