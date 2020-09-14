@@ -11,7 +11,7 @@ from sklearn.svm import SVC
 from Model.data_model import DataModel
 from Layouts.figures_svm_component import serve_prediction_plot, serve_roc_curve, \
     serve_pie_confusion_matrix
-from Controllers.statistics_controller import StatisticsController as StController, initialization
+from Controllers.statistics_controller import DataService as StController, initialization
 
 from Layouts.app import app
 
@@ -86,23 +86,19 @@ def update_svm_graph(kernel,
                      titleX,
                      titleY, update, filename
                      ):
+    print("TITLE Y ", titleY)
+    print("TITLE X ", titleX)
     t_start = time.time( )
     h = .3  # step size in the mesh
     shrinking = bool(shrinking)
     # Data Pre-processing
     initialization( )
-    # data = DataModel( )  # Se inicializa el objeto data
-    # df_X = data.get_df_X( )  # se llama al al dataFrame que se encuentra en el update
-
-    # LA DATA NO ESTÁ LLEGANDO PORQUE NO LAHE LLAMADO DESDE EL CONTROLLER FALTA HACER UN METODO O VARIABLE GLOBAL QUE LO HAGA
-
-    df_X = StController.get_allData()
-    print("Datafame", df_X.head(3))
-    print(titleY in df_X.columns)
+    # data = DataModel( )  #  se inicializa en el controller las variables de dataFrames y titulos con lo que llega al update
+    df_X = initialization.df_SVM_data  # se llama al al dataFrame que se encuentra inicializado
     print("Titulo a quitar del dataframe", titleY)
-    if titleY in df_X.columns:
+    if titleY in df_X.columns and not df_X.index.empty:
         print("si entro al def_X en svm callback")
-        y = initialization.df_data[titleY]
+        y = df_X[titleY]
         X = df_X.drop([titleY], axis=1)
     else:
         print("No entro al def_X en svm callback")
@@ -112,9 +108,10 @@ def update_svm_graph(kernel,
             random_state=0
         )
         X, y = dataset
-    # print(" xxxxx ",X, " yyyy ", y)
-    X = StandardScaler( ).fit_transform(X)  # Requere que tenga una matriz con nejemplos y n columnas
-
+    # Normalización de la matriz: Se escalan los datos
+    X = StandardScaler( ).fit_transform(X)  # Requiere que tenga una matriz con nejemplos y n columnas
+    print("X scaler ",X)
+    # print("X scaler tamaño ", X)
     X_train, X_test, y_train, y_test = \
         train_test_split(X, y, test_size=.4, random_state=42)
 
@@ -140,11 +137,14 @@ def update_svm_graph(kernel,
 
     # Plot the decision boundary. For that, we will assign a color to each
     # point in the mesh [x_min, x_max]x[y_min, y_max].
-    # print(np.c_[xx.ravel(), yy.ravel()])
+    print("XXX RAVEL  ", xx.ravel(),"YYY RAVEL", yy.ravel())
+    print("CLF ", clf)
     if hasattr(clf, "decision_function"):
         Z = clf.decision_function(np.c_[xx.ravel( ), yy.ravel( )])
+        print("Z1 ", Z)
     else:
         Z = clf.predict_proba(np.c_[xx.ravel( ), yy.ravel( )])[:, 1]
+        print("Z2 ", Z)
 
     prediction_figure = serve_prediction_plot(
         model=clf,

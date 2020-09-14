@@ -2,7 +2,7 @@ import pandas as pd
 from Model.data_model import DataModel
 
 
-class Statistics:
+class DataService:
     def __init__(self):
         self.data = DataModel( ).data( )
 
@@ -71,24 +71,51 @@ class Statistics:
         return new_df
 
     def frecuency_table(self, new_df):
+        """
+        :param new_df: dataFrame a analizar
+        :return: dataFrame con la información de una tabla de frecuencias(max,min,media,moda,percentiles)
+        """
         df = pd.DataFrame(new_df.describe( ))
         return df
 
     def shape(self, new_df):
+        """
+        :param new_df: dataFrame a analizar
+        :return: Tupla con las dimensiones del dataframe (fila, columna)
+        """
         return new_df.shape( )
 
     def title(self):
+        """
+        :return: Lista de titulos predeterminados de un archivo inicial del programa antes de cargar el usuario uno
+        """
         df = pd.DataFrame(DataModel().file_variables_title( ))
         return df
 
     def generate_titles(self):
+        """
+        :return: lista de titulos inciales convertidos en dataframe
+        """
         titles = []
-        df_titles = Statistics( ).title( )
+        df_titles = DataService( ).title( )
         for i in df_titles:
             titles.append({'label': i, 'value': i})
         return titles
 
     def correlation_pearson_pairs(self, df):
+        """
+        :param df: dataFrame de severidad
+        :return: dataframe con los coeficientes de correolación de pearson
+        """
         return df.corr(method='pearson')
 
+    def gerenation_df_severitySVM(self, data, df_severity):
+        """
+        :param data: archivo cargado desde el upload en DataFrame
+        :param df_severity: dataframe generado para severidad a partir del archivo cargado
+        :return: la unión entre el df_severity y la ultima columna de la data (variable Y)
+        """
+        pd.DataFrame(data)
+        df_severity[data.iloc[:,-1].name]=data.iloc[:,-1].tolist()
+        return df_severity
 

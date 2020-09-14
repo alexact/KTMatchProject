@@ -4,9 +4,9 @@ import io
 import pandas as pd
 from Layouts.upload_component import not_succesfull_upload, succesfull_upload
 from Model.data_model import DataModel as data
-from Model.data_service import Statistics
+from Model.data_service import DataService
 
-s = Statistics( )
+s = DataService( )
 
 
 # Gestiona la data proveniente del archivo excel
@@ -17,53 +17,62 @@ def initialization():
         initialization.df_frecuency = initialization.df_data
         initialization.df_impact = initialization.df_data
         initialization.df_data_frecuency = initialization.df_data
+        initialization.df_SVM_data = initialization.df_data
+
 
 class StatisticsController( ):
     titles_frec = []
     titles_dropdown = []
     titles_heatmap = []
+    titles_dropdown_svm = []
 
     def __init__(self):
         self.evaluate_data( )
 
     # Se está reiniciando los valores de las variables para la tabla
     def evaluate_data(self):
-
         initialization( )
         if not initialization.df_data.empty and 'Title' not in initialization.df_frecuency:
             initialization.df_frecuency.insert(0, 'Title', ["Count", "Mean", "Std", 'Min', '25%', '50%', '75%', "Max"])
             self.titles_frec = []
             self.titles_dropdown = []
+            self.titles_dropdown_svm = []
         if self.titles_frec == []:
             self.titles_frec.append({'name': 'Title', 'id': 'title'})
             for i in list(initialization.df_frecuency):
                 self.titles_frec.append({'name': i, 'id': i})
                 self.titles_dropdown.append({'label': i, 'value': i})
+        if self.titles_dropdown_svm == []:
+            for i in list(initialization.df_SVM_data):
+                self.titles_dropdown_svm.append({'label': i, 'value': i})
+
 
     def get_allData(self, data_upload):
-        df = s.gerenation_df_severity(6, data_upload)
+        df = s.gerenation_df_severity(0, data_upload)
         return df
 
-    def generate_statistics(self, data_upload):
+    def generate_statistics(self, data_upload, start_col):
         """
         :param data_upload: Recibe decodificado la tabla de valores del archivo csv
         :return:Retorna la tabla de frecuencias con los maximos, minimos, media entre otros.
         """
-        initialization.df_data = s.gerenation_df_severity(0, data_upload)
+        initialization.df_data = s.gerenation_df_severity(start_col, data_upload)
         initialization.df_frecuency = s.frecuency_table(initialization.df_data)
-        initialization.df_impact = s.generation_df_impact(0, data_upload)
+        initialization.df_impact = s.generation_df_impact(start_col, data_upload)
+        initialization.df_SVM_data = s.gerenation_df_severitySVM(data_upload,initialization.df_data)
         # print("IMPACTO ",initialization.df_impact)
-        initialization.df_data_frecuency =s.generation_df_frecuency(0, data_upload)
+        print("SVM SVERITY ",list(initialization.df_SVM_data))
+        initialization.df_data_frecuency =s.generation_df_frecuency(start_col, data_upload)
         # print("FRECUENCIAAA ", initialization.df_data_frecuency)
         self.evaluate_data( )
 
     def get_graphs_dispersion(self, nameX, nameY):
         """
-        :param nameX: nombre selecciona
-        :param nameY:
-        :return:
+        :param nameX: nombre seleccionado para el eje X desde la lista desplegable pestaña cual es la estadistica
+        :param nameY:nombre seleccionado para el eje Y desde la lista desplegable pestaña cual es la estadistica
+        :return:Un dataFrame de dispersiòn
         """
-        df = StatisticsController.get_allData(data.df_X)
+        df = DataService.get_allData(data.df_X)
         df_dispersion = pd.merge(df[nameX], df[nameY], left_on=nameX, right_on=nameY)
         return df_dispersion
 
@@ -81,8 +90,12 @@ class StatisticsController( ):
             if 'csv' in filename:
                 # Assume that the user uploaded a CSV file
                 df_X = pd.read_csv(
-                    io.StringIO(decoded.decode('utf-8')))
-                self.generate_statistics(df_X)
+                    io.StringIO(decoded.decode('utf-8')), sep=';')
+                print("ARCHIVOOOO ", df_X)
+                print("TIPOS DE ARCHIVO ", [{i:df_X[i].unique()} for i in df_X.columns] )
+
+
+                self.generate_statistics(df_X, 0)
 
             elif 'xls' in filename:
                 # Assume that the user uploaded an excel file
@@ -97,5 +110,5 @@ class StatisticsController( ):
 
     def get_correlation(self):
         if not initialization.df_data.empty:
-            df = Statistics().correlation_pearson_pairs(initialization.df_data)
+            df = DataService( ).correlation_pearson_pairs(initialization.df_data)
             return df

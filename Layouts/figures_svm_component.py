@@ -4,7 +4,7 @@ import numpy as np
 from collections import OrderedDict
 from sklearn import metrics
 
-from Controllers.statistics_controller import StatisticsController, initialization
+from Controllers.statistics_controller import DataService, initialization
 
 
 

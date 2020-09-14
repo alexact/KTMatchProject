@@ -45,5 +45,7 @@ def succesfull_upload(filename, date):
 
 def not_succesfull_upload():
     return html.Div([
-        dbc.Alert('Hubo un error al procesar el archivo.',color="danger")
+        dbc.Alert('Hubo un error al procesar el archivo.',color="danger"),
+        dbc.Alert('Recuerde delimitar por ";". No usar texto con tíldes.\nEn los resultados de las variables '
+                  'usar solo números, excepto por la última columna que es la variables Y (texto)', color="danger")
     ])

@@ -3,9 +3,10 @@ from textwrap import dedent
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-from Model.data_service import Statistics
+from Model.data_service import DataService
+from Controllers.statistics_controller import StatisticsController as StController, initialization
 
-
+initialization( )
 
 # Display utility functions
 def _merge(a, b):
@@ -13,7 +14,7 @@ def _merge(a, b):
 
 
 def _omit(omitted_keys, d):
-    return {k: v for k, v in d.items() if k not in omitted_keys}
+    return {k: v for k, v in d.items( ) if k not in omitted_keys}
 
 
 # Custom Display Components
@@ -34,6 +35,8 @@ def Card(children, **kwargs):
         }, kwargs.get('style', {})),
         **_omit(['style'], kwargs)
     )
+
+
 def Card_markdown(children, **kwargs):
     return html.Section(
         children,
@@ -42,7 +45,7 @@ def Card_markdown(children, **kwargs):
             'margin': 5,
             'borderRadius': 5,
             'border': 'thin lightgrey solid',
-            'background - color':  '# 003399',
+            'background - color': '# 003399',
 
             # Remove possibility to select the text for better UX
             'user-select': 'none',
@@ -101,28 +104,28 @@ def NamedRadioItems(name, **kwargs):
 # Non-generic
 def DemoDescription(filename, strip=False):
     with open(filename, 'r') as file:
-        text = file.read()
+        text = file.read( )
 
     if strip:
         text = text.split('<Start Description>')[-1]
         text = text.split('<End Description>')[0]
 
     return html.Div(
-            className='row',
-            style={
-                'padding': '15px 30px 27px',
-                'margin': '45px auto 45px',
-                'width': '80%',
-                'max-width': '1024px',
-                'borderRadius': 5,
-                'border': 'thin lightgrey solid',
-                'font-family': 'Roboto, sans-serif'
-            },
-            children=dcc.Markdown(dedent(text))
+        className='row',
+        style={
+            'padding': '15px 30px 27px',
+            'margin': '45px auto 45px',
+            'width': '80%',
+            'max-width': '1024px',
+            'borderRadius': 5,
+            'border': 'thin lightgrey solid',
+            'font-family': 'Roboto, sans-serif'
+        },
+        children=dcc.Markdown(dedent(text))
     )
 
+
 def card_dropdown():
-    titles = Statistics( ).generate_titles( )
     return Card([
         html.Div(
             [
@@ -142,20 +145,20 @@ def card_dropdown():
                 ),
             ]
         ),
-                        NamedDropdown(
-                            name='Selecciona la variable X ',
-                            id='dropdown-svm-parameter-X',
-                            options=titles,
-                            value=titles[0]['value'],
-                            clearable=False,
-                            searchable=False
-                        ),
-                        NamedDropdown(
-                            name='Seleccione la variable Y a predecir',
-                            id='dropdown-svm-parameter-Y',
-                            options=titles,
-                            value=titles[1]['value'],
-                            clearable=False,
-                            searchable=False
-                        ),
-                    ])
+        NamedDropdown(
+            name='Selecciona la variable X ',
+            id='dropdown-svm-parameter-X',
+            options=StController().titles_dropdown_svm,
+            value=StController().titles_dropdown_svm[0]['value'],
+            clearable=False,
+            searchable=False
+        ),
+        NamedDropdown(
+            name='Seleccione la variable Y a predecir',
+            id='dropdown-svm-parameter-Y',
+            options=StController().titles_dropdown_svm,
+            value=StController().titles_dropdown_svm[-1]['value'],
+            clearable=False,
+            searchable=False
+        ),
+    ])
