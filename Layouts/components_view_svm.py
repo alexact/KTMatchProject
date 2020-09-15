@@ -7,7 +7,7 @@ from Model.data_service import DataService
 from Controllers.statistics_controller import StatisticsController as StController, initialization
 
 initialization( )
-
+sts_controller = StController( )
 # Display utility functions
 def _merge(a, b):
     return dict(a, **b)
@@ -148,8 +148,8 @@ def card_dropdown():
         NamedDropdown(
             name='Selecciona la variable X ',
             id='dropdown-svm-parameter-X',
-            options=StController().titles_dropdown_svm,
-            value=StController().titles_dropdown_svm[0]['value'],
+            options=sts_controller.titles_dropdown_svm,
+            value=sts_controller.titles_dropdown_svm[0]['value'],
             clearable=False,
             searchable=False
         ),

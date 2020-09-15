@@ -1,4 +1,5 @@
 import time
+import logging
 from sklearn import datasets
 import dash_core_components as dcc
 import dash_html_components as html
@@ -11,10 +12,11 @@ from sklearn.svm import SVC
 from Model.data_model import DataModel
 from Layouts.figures_svm_component import serve_prediction_plot, serve_roc_curve, \
     serve_pie_confusion_matrix
-from Controllers.statistics_controller import DataService as StController, initialization
+from Controllers.statistics_controller import StatisticsController as StController, initialization
 
 from Layouts.app import app
 
+sts_controller = StController( )
 
 @app.callback(Output('slider-svm-parameter-gamma-coef', 'marks'),
               [Input('slider-svm-parameter-gamma-power', 'value')])
@@ -61,6 +63,19 @@ def disable_slider_param_gamma_power(kernel):
     return kernel not in ['rbf', 'poly', 'sigmoid']
 
 
+@app.callback([Output('dropdown-svm-parameter-X', 'options'),
+               Output('dropdown-svm-parameter-X', 'value'),
+               Output('dropdown-svm-parameter-Y', 'options'),
+               Output('dropdown-svm-parameter-Y', 'value')],
+              [Input('output-data-uploads', 'children')])
+def update_dropdown(children):
+    optionsX = initialization.titles_dropdown_svm
+    optionsY = optionsX
+    valueX=optionsX[0]['value']
+    valueY=optionsY[-1]['value']
+    return optionsX, valueX, optionsY, valueY
+
+
 @app.callback(Output('div-graphs', 'children'),
               [Input('dropdown-svm-parameter-kernel', 'value'),
                Input('slider-svm-parameter-degree', 'value'),
@@ -86,8 +101,6 @@ def update_svm_graph(kernel,
                      titleX,
                      titleY, update, filename
                      ):
-    print("TITLE Y ", titleY)
-    print("TITLE X ", titleX)
     t_start = time.time( )
     h = .3  # step size in the mesh
     shrinking = bool(shrinking)
@@ -95,13 +108,12 @@ def update_svm_graph(kernel,
     initialization( )
     # data = DataModel( )  #  se inicializa en el controller las variables de dataFrames y titulos con lo que llega al update
     df_X = initialization.df_SVM_data  # se llama al al dataFrame que se encuentra inicializado
-    print("Titulo a quitar del dataframe", titleY)
     if titleY in df_X.columns and not df_X.index.empty:
-        print("si entro al def_X en svm callback")
+        logging.info("Entró al def_X en svm callback")
         y = df_X[titleY]
-        X = df_X.drop([titleY], axis=1)
+        X = df_X.drop([titleY], axis=1).values
     else:
-        print("No entro al def_X en svm callback")
+        logging.info("No entro al def_X en svm callback, se ingresa al ejemplo dataset_moons")
         dataset = datasets.make_moons(
             n_samples=200,
             noise=0.6,
@@ -109,9 +121,13 @@ def update_svm_graph(kernel,
         )
         X, y = dataset
     # Normalización de la matriz: Se escalan los datos
+    print("VALOR DE X ", X)
+    print("SHAPE", X.shape[1])
+    logging.info("X antes de escarlarse ", X)
     X = StandardScaler( ).fit_transform(X)  # Requiere que tenga una matriz con nejemplos y n columnas
-    print("X scaler ",X)
-    # print("X scaler tamaño ", X)
+    logging.info("X depues del scaler ", X)
+
+
     X_train, X_test, y_train, y_test = \
         train_test_split(X, y, test_size=.4, random_state=42)
 
@@ -134,13 +150,14 @@ def update_svm_graph(kernel,
         shrinking=shrinking
     )
     clf.fit(X_train, y_train)
-
+    # print("XTRAIN   ",y_train)
     # Plot the decision boundary. For that, we will assign a color to each
     # point in the mesh [x_min, x_max]x[y_min, y_max].
-    print("XXX RAVEL  ", xx.ravel(),"YYY RAVEL", yy.ravel())
-    print("CLF ", clf)
+    print("XXX RAVEL  ", xx.ravel( ), "YYY RAVEL", yy.ravel( ))
+    prueba= np.c_[xx.ravel( ), yy.ravel( )]
+    # print("CLF ", clf)
     if hasattr(clf, "decision_function"):
-        Z = clf.decision_function(np.c_[xx.ravel( ), yy.ravel( )])
+        Z = clf.decision_function(prueba)
         print("Z1 ", Z)
     else:
         Z = clf.predict_proba(np.c_[xx.ravel( ), yy.ravel( )])[:, 1]
@@ -239,7 +256,6 @@ def update_svm_graph(kernel,
     [State("collapse_tips_svm", "is_open")]
 )
 def toggle_collapse_kernel(n, is_open):
-    print("isopen", is_open)
     if n:
         return not is_open
     return is_open
@@ -251,7 +267,6 @@ def toggle_collapse_kernel(n, is_open):
     [State("collapse_tips_confusion-matrix", "is_open")]
 )
 def toggle_collapse_confusion_matrix(n, is_open):
-    print("isopen2", is_open)
     if n:
         return not is_open
     return is_open

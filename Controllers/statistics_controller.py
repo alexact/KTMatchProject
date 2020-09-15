@@ -5,6 +5,7 @@ import pandas as pd
 from Layouts.upload_component import not_succesfull_upload, succesfull_upload
 from Model.data_model import DataModel as data
 from Model.data_service import DataService
+import logging
 
 s = DataService( )
 
@@ -18,6 +19,11 @@ def initialization():
         initialization.df_impact = initialization.df_data
         initialization.df_data_frecuency = initialization.df_data
         initialization.df_SVM_data = initialization.df_data
+        initialization.titles_frec = []
+        initialization.titles_dropdown = []
+        initialization.titles_heatmap = []
+        initialization.titles_dropdown_svm = []
+
 
 
 class StatisticsController( ):
@@ -29,6 +35,14 @@ class StatisticsController( ):
     def __init__(self):
         self.evaluate_data( )
 
+    def get_titles_svm(self):
+        return self.titles_dropdown_svm
+
+
+    def set_titles_svm(self, titles):
+        self.titles_dropdown_svm=titles
+        initialization.titles_dropdown_svm=titles
+
     # Se está reiniciando los valores de las variables para la tabla
     def evaluate_data(self):
         initialization( )
@@ -37,15 +51,17 @@ class StatisticsController( ):
             self.titles_frec = []
             self.titles_dropdown = []
             self.titles_dropdown_svm = []
-        if self.titles_frec == []:
+        if not self.titles_frec:
             self.titles_frec.append({'name': 'Title', 'id': 'title'})
             for i in list(initialization.df_frecuency):
                 self.titles_frec.append({'name': i, 'id': i})
                 self.titles_dropdown.append({'label': i, 'value': i})
-        if self.titles_dropdown_svm == []:
+            initialization.titles_frec = self.titles_frec
+            initialization.titles_dropdown = self.titles_dropdown
+        if not self.titles_dropdown_svm:
             for i in list(initialization.df_SVM_data):
                 self.titles_dropdown_svm.append({'label': i, 'value': i})
-
+            self.set_titles_svm(self.titles_dropdown_svm)
 
     def get_allData(self, data_upload):
         df = s.gerenation_df_severity(0, data_upload)
@@ -59,9 +75,9 @@ class StatisticsController( ):
         initialization.df_data = s.gerenation_df_severity(start_col, data_upload)
         initialization.df_frecuency = s.frecuency_table(initialization.df_data)
         initialization.df_impact = s.generation_df_impact(start_col, data_upload)
-        initialization.df_SVM_data = s.gerenation_df_severitySVM(data_upload,initialization.df_data)
+        initialization.df_SVM_data = s.gerenation_df_severitySVM(data_upload, initialization.df_data)
         # print("IMPACTO ",initialization.df_impact)
-        print("SVM SVERITY ",list(initialization.df_SVM_data))
+        # print("SVM SVERITY ", initialization.df_SVM_data)
         initialization.df_data_frecuency =s.generation_df_frecuency(start_col, data_upload)
         # print("FRECUENCIAAA ", initialization.df_data_frecuency)
         self.evaluate_data( )
@@ -91,10 +107,8 @@ class StatisticsController( ):
                 # Assume that the user uploaded a CSV file
                 df_X = pd.read_csv(
                     io.StringIO(decoded.decode('utf-8')), sep=';')
-                print("ARCHIVOOOO ", df_X)
-                print("TIPOS DE ARCHIVO ", [{i:df_X[i].unique()} for i in df_X.columns] )
-
-
+                #print("ARCHIVOOOO ", df_X)
+                logging.info("TIPOS DE ARCHIVO ", [{i:df_X[i].unique()} for i in df_X.columns] )
                 self.generate_statistics(df_X, 0)
 
             elif 'xls' in filename:
