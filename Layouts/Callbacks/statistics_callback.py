@@ -9,6 +9,19 @@ import plotly.graph_objects as go
 import plotly.express as px
 
 
+@app.callback([Output('var_XSev', 'options'),
+               Output('var_XSev', 'value'),
+               Output('var_YSev', 'options'),
+               Output('var_YSev', 'value')],
+              [Input('output-data-uploads', 'children')])
+def update_dropdown(children):
+    optionsX = initialization.titles_dropdown
+    optionsY = optionsX
+    valueX = optionsX[0]['value']
+    valueY = optionsY[-1]['value']
+    return optionsX, valueX, optionsY, valueY
+
+
 @app.callback([Output('frec_table', 'data'),
                Output('frec_table', 'columns')],
               [Input('output-data-uploads', 'children')])
@@ -21,7 +34,7 @@ def update_table(children):
     if initialization.df_data is not None:
         # table = dbc.Table.from_dataframe(initialization.df_frecuency.to_dict('records'), striped=True,
         # bordered=True, hover=True, id='frec_table')
-        return initialization.df_frecuency.to_dict('records'), StController.titles_frec
+        return initialization.df_frecuency.to_dict('records'), initialization.titles_frec
 
 
 @app.callback(Output("correlation-Graph", "figure"),
@@ -31,25 +44,40 @@ def update_table(children):
 def update_fig_corr(data_df, input_value, var_YSev):
     """
     Actualiza la gráfica de dispersión de la severidad
-    :param data_df:
-    :param input_value:
-    :param var_YSev:
+    :param data_df: data de severidad
+    :param input_value: valor seleccionado desde la interfaz para el eje x
+    :param var_YSev:valor seleccionado desde la interfaz para el eje y
     :return:
     """
-    title = [i for i in list(initialization.df_data)]
-    colX = title.index(input_value)
-    colY = title.index(var_YSev)
-    data_df = initialization.df_data
-    if data_df is not None:
-        data = [dict(
-            x=data_df[title[colX]],
-            y=data_df[title[colY]],
-            mode='markers',
-            opacity=0.7,
-            marker={
-                'size': 15,
-                'line': {'width': 0.5, 'color': 'white'}
-            })]
+    initialization( )
+    if initialization.df_data is not None:
+        title = [i for i in list(initialization.df_data)]
+        print(title)
+        colX = title.index(input_value)
+        colY = title.index(var_YSev)
+        data_df = initialization.df_data
+        if data_df is not None:
+            data = [dict(
+                x=data_df[title[colX]],
+                y=data_df[title[colY]],
+                mode='markers',
+                opacity=0.7,
+                marker={
+                    'size': 15,
+                    'line': {'width': 0.5, 'color': 'white'}
+                })]
+            layout = dict(
+                title="Gráfica de correlación severidad (Impacto x Frecuencia)",
+                xaxis={'type': 'log', 'title': title[colX]},
+                yaxis={'title': title[colY]},
+                legend={'x': 'a', 'y': 0},
+                hovermode='closest'
+            )
+
+            print('You have selected for X corr"{}"'.format(input_value))
+            r = {"data": data,
+                 "layout": layout}
+            return r
         layout = dict(
             title="Gráfica de correlación",
             xaxis={'type': 'log', 'title': title[colX]},
@@ -57,30 +85,18 @@ def update_fig_corr(data_df, input_value, var_YSev):
             legend={'x': 'a', 'y': 0},
             hovermode='closest'
         )
-
-        print('You have selected for X corr"{}"'.format(input_value))
+        data = [dict(
+            x=0,
+            y=0,
+            mode='markers',
+            opacity=0.7,
+            marker={
+                'size': 15,
+                'line': {'width': 0.5, 'color': 'white'}
+            })]
         r = {"data": data,
              "layout": layout}
         return r
-    layout = dict(
-        title="Gráfica de correlación",
-        xaxis={'type': 'log', 'title': title[colX]},
-        yaxis={'title': title[colY]},
-        legend={'x': 'a', 'y': 0},
-        hovermode='closest'
-    )
-    data = [dict(
-        x=0,
-        y=0,
-        mode='markers',
-        opacity=0.7,
-        marker={
-            'size': 15,
-            'line': {'width': 0.5, 'color': 'white'}
-        })]
-    r = {"data": data,
-         "layout": layout}
-    return r
 
 
 @app.callback([Output('histogram_impact', 'figure'),
@@ -100,8 +116,14 @@ def update_histograms(upload, var_XSev, var_YSev):
         x_frec = initialization.df_data_frecuency[title[colX]]
         y_frec = initialization.df_data_frecuency[title[colY]]
 
-        fig_impact = px.bar(initialization.df_impact, x=title[colX], y=title[colY])
-        fig_frec = px.bar(initialization.df_data_frecuency, x=title[colX], y=title[colY])
+        fig_impact = px.bar(initialization.df_impact,
+                            x=title[colX],
+                            y=title[colY],
+                            title="Grafica de barras - Impacto del problema ")
+        fig_frec = px.bar(initialization.df_data_frecuency,
+                          x=title[colX],
+                          y=title[colY],
+                          title="Grafica de barras - Frecuecia con la que ocurre el problema")
     return fig_impact, fig_frec
     """@app.callback([Output('histogram_impact', 'figure'),
                Output('histogram_frecuency', 'figure')

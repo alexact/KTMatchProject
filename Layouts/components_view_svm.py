@@ -157,7 +157,7 @@ def card_dropdown():
             name='Seleccione la variable Y a predecir',
             id='dropdown-svm-parameter-Y',
             options=StController().titles_dropdown_svm,
-            value=StController().titles_dropdown_svm[-1]['value'],
+            value=StController().titles_dropdown_svm[1]['value'],
             clearable=False,
             searchable=False
         ),

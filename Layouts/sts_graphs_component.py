@@ -62,14 +62,21 @@ def dropdown_scatter_graph():
             justify="between"),
         dbc.Row(
             [
-                dbc.Col(html.Div([dcc.Dropdown(id='var_XSev', options=StController.titles_dropdown,
-                                               value=StController( ).titles_dropdown[2]['value'], clearable=False)],
-                                 className="titlesXSev_Dropdown")
-                        , width=5),
+                dbc.Col(html.Div([dcc.Dropdown(
+                    id='var_XSev',
+                    options=initialization.titles_dropdown,
+                    value=initialization.titles_dropdown[2]['value'],
+                    clearable=False)],
+                    className="titlesXSev_Dropdown"
+                ), width=5),
 
-                dbc.Col(html.Div([dcc.Dropdown(id='var_YSev', options=StController.titles_dropdown,
-                                               value=StController( ).titles_dropdown[3]['value'], clearable=False)],
-                                 className="titlesYSev_Dropdown"), width=5),
+                dbc.Col(html.Div([
+                    dcc.Dropdown(id='var_YSev',
+                                 options=initialization.titles_dropdown,
+                                 value=initialization.titles_dropdown[3]['value'],
+                                 clearable=False)],
+                    className="titlesYSev_Dropdown"
+                ), width=5),
             ], justify="between")
     ]), color="info", outline=True,
         style={'padding': '15px'})

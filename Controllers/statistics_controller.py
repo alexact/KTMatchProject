@@ -52,15 +52,16 @@ class StatisticsController( ):
             self.titles_dropdown = []
             self.titles_dropdown_svm = []
         if not self.titles_frec:
-            self.titles_frec.append({'name': 'Title', 'id': 'title'})
             for i in list(initialization.df_frecuency):
                 self.titles_frec.append({'name': i, 'id': i})
-                self.titles_dropdown.append({'label': i, 'value': i})
             initialization.titles_frec = self.titles_frec
-            initialization.titles_dropdown = self.titles_dropdown
+        svm_list=list(initialization.df_SVM_data)
         if not self.titles_dropdown_svm:
-            for i in list(initialization.df_SVM_data):
+            for i in svm_list[:-1]:
                 self.titles_dropdown_svm.append({'label': i, 'value': i})
+                self.titles_dropdown.append({'label': i, 'value': i})
+            self.titles_dropdown_svm.append({'label': svm_list[-1], 'value': svm_list[-1]})
+            initialization.titles_dropdown = self.titles_dropdown
             self.set_titles_svm(self.titles_dropdown_svm)
 
     def get_allData(self, data_upload):
