@@ -110,10 +110,11 @@ def update_svm_graph(kernel,
     initialization( )
     # data = DataModel( )  #  se inicializa en el controller las variables de dataFrames y titulos con lo que llega al update
     df_X = initialization.df_SVM_data  # se llama al al dataFrame que se encuentra inicializado
+    print(df_X.iloc[:,[0,14]])
     if titleX and titleX2 in df_X.columns and not df_X.index.empty:
         logging.info("Entró al def_X en svm callback")
         y = df_X.iloc[:, -1]
-        X = df_X.iloc[:, 1-2]
+        X = df_X.loc[:,[titleX,titleX2]]
     else:
         logging.info("No entro al def_X en svm callback, se ingresa al ejemplo dataset_moons")
         dataset = datasets.make_moons(
