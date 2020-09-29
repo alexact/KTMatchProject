@@ -22,9 +22,11 @@ desc = Description( )
 def render_content(tab):
     if tab == 'tab-1':
         return [
-           desc.description_instruction()
+           desc.description_about_app()
         ]
     elif tab == 'tab-2':
+        return desc.description_instruction()
+    elif tab == 'tab-3':
         card_graph = dbc.Card([dbc.CardHeader(html.H4("Correlación de variables para la severidad")),
                                dbc.CardBody(
                                    [upload_component( ), dropdown_scatter_graph( ), scatter_graph( )]
@@ -56,7 +58,6 @@ def render_content(tab):
 
         ]
 
-    elif tab == 'tab-3':
-        return [upload_component( ), layout_SVM]
     elif tab == 'tab-4':
-        return desc.description_about_app()
+        return [upload_component( ), layout_SVM]
+

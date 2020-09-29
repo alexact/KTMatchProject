@@ -67,7 +67,7 @@ def serve_prediction_plot(model,
             operation='=',
             value=scaled_threshold,
         ),
-        name=f'Threshold ({scaled_threshold:.3f})',
+        name=f'Umbral-Threshold ({scaled_threshold:.3f})',
         line=dict(
             color='#222222'
         )
@@ -78,7 +78,7 @@ def serve_prediction_plot(model,
         x=X_train[:, 0],
         y=X_train[:, 1],
         mode='markers',
-        name=f'Training Data (accuracy={train_score:.3f})',
+        name=f'Training Data (Presición- accuracy={train_score:.3f})',
         marker=dict(
             size=10,
             color=y_train,
@@ -94,7 +94,7 @@ def serve_prediction_plot(model,
         x=X_test[:, 0],
         y=X_test[:, 1],
         mode='markers',
-        name=f'Test Data (accuracy={test_score:.3f})',
+        name=f'Test Data (Presición- accuracy={test_score:.3f})',
         marker=dict(
             size=10,
             symbol='triangle-up',
@@ -182,7 +182,7 @@ def serve_pie_confusion_matrix(model,
     label_text = ["Verdadero Positivo",
                   "Falso Negativo",
                   "Falso Positivo",
-                  "Verdaderi¿o Negativo"]
+                  "Verdadero Negativo"]
     labels = ["VP", "FN", "FP", "VN"]
     blue = cl.flipper()['seq']['9']['Blues']
     red = cl.flipper()['seq']['9']['Reds']

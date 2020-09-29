@@ -9,26 +9,26 @@ content_tab_layout = html.Div([
         className='custom-tabs-container',
         children=[
             dcc.Tab(
-                label='Instrucciones',
+                label='Acerca de la app',
                 value='tab-1',
                 className='custom-tab',
                 selected_className='custom-tab--selected'
             ),
             dcc.Tab(
-                label='Cuál es la estadística?',
+                label='Instrucciones',
                 value='tab-2',
                 className='custom-tab',
                 selected_className='custom-tab--selected'
             ),
             dcc.Tab(
-                label='Algoritmo SVM',
-                value='tab-3', className='custom-tab',
+                label='Cuál es la estadística?',
+                value='tab-3',
+                className='custom-tab',
                 selected_className='custom-tab--selected'
             ),
             dcc.Tab(
-                label='Acerca de la app',
-                value='tab-4',
-                className='custom-tab',
+                label='Algoritmo SVM',
+                value='tab-4', className='custom-tab',
                 selected_className='custom-tab--selected'
             ),
         ]),

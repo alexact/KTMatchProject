@@ -43,7 +43,7 @@ layout_SVM = html.Div(id='body', className='container scalable', children=[
                             html.Div(
                                 [
                                     dbc.Button(
-                                        "Tips",
+                                        "Tips 2",
                                         id="collapse-button_kernel",
                                         className="mb-3",
                                         color="primary",
@@ -52,7 +52,8 @@ layout_SVM = html.Div(id='body', className='container scalable', children=[
                                         dbc.Card(dbc.CardBody("Cambia los kernel y selecciona el que clasifique en la "
                                                               "gráfica del mapa de calor menos combinación entre los "
                                                               "puntos de diferentes formas y colores. Apóyate en la "
-                                                              "matriz de confusión")),
+                                                              "matriz de confusión Tip 3 y en la precisión (Accuracy) "
+                                                              "deberá acercarse a 1 tanto para datos de prueba como para entrenamiento")),
                                         id="collapse_tips_svm",
                                     ),
                                 ]
@@ -71,7 +72,21 @@ layout_SVM = html.Div(id='body', className='container scalable', children=[
                                 clearable=False,
                                 searchable=False
                             ),
-
+                            html.Div(
+                                [
+                                    dbc.Button(
+                                        "Tips 4",
+                                        id="collapse_button_params",
+                                        className="mb-3",
+                                        color="primary",
+                                    ),
+                                    dbc.Collapse(
+                                        dbc.Card(dbc.CardBody("Parametriza cada uno de los siguientes atributos"
+                                                              " y verifica si la precisión se acerca a 1")),
+                                        id="collapse_tips_params",
+                                    ),
+                                ]
+                            ),
                             drc.NamedSlider(
                                 name='Cost (C)',
                                 id='slider-svm-parameter-C-power',

@@ -4,13 +4,7 @@
     background-color: rgb(97, 22, 118);
     border-radius: 2px;
 }
-.banner H1{
-    font-family:'Helvetica','Verdana','Monaco',sans-serif;
-    color: white;
-    padding: 10px -10px 0px;
-    margin-left: 2%;
-    display: inline-block;
-}
+
 .banner Img{
     margin:0px 0px 0px;
     position:relative;

@@ -149,19 +149,29 @@ class Description:
             dbc.CardHeader("Sobre KTMath"),
             dbc.CardBody(
                 [html.Div([
-                    html.H1('Como usar KtMath', className="card-title"),
+                    html.H1('¿Por qué usar KtMath?', className="card-title"),
                     html.Br( ),
                     html.H2('Gestión del conocimiento con inteligencia matemática'),
-                    html.Ol('- Fugas en transferencia de conocimiento en tu empresa?'),
-                    html.Ol('- Conoces las causas?'),
-                    html.Ol('- Quisieras reconocer de manera cuantitativa este tipo de problemáticas?'),
-                    html.Ol('- Generar un control de la gestión del conocimiento'),
+                    html.Ol('- ¿Fugas en transferencia de conocimiento en tu empresa?'),
+                    html.Ol('- ¿Identificas el contexto que debes analizar?'),
+                    html.Ol('- ¿Quisieras reconocer de manera cuantitativa este tipo de problemáticas?'),
+                    html.Ol('- ¿Generar un control de la gestión del conocimiento'),
                     html.Br( ),
-                    html.H2('¿Qué es KTmat?', className="card-subtitle"),
-                    html.P('KTmat es una herramienta diseñada para facilitar a las empresas y a '
+                    html.H2('¿Qué es KTmath?', className="card-subtitle"),
+                    html.P('KTmath es una herramienta diseñada para facilitar a las empresas y a '
                            'personas dedicadas a la gestión del conocimiento el diagnostico de problematicas '
                            'que se encuentran en la transferencia de conocimiento utilizando herramientas estadísticas'
                            ' y de machine learning para mejorar su precisión.',
+                           className="card-text"),
+                    html.Br( ),
+                    html.H2('¿En que información se basa KTmat?', className="card-subtitle"),
+                    html.P('KTmath se basa en un conjunto de variables de entrada o variables X que fueron recolectadas'
+                           ' a partir de diferentes fuentes de artículos en repositorios indexados donde los autores'
+                           ' realizaron análisis sobre las causas de fugas en gestión del conocimiento tales como miedo'
+                           ' al reemplazo, desvinculación, cultura de documentación.'
+                           'Las variables se califican de 0 a 5 por parte de encuestados que pueden ser trabajadores de '
+                           'una empresa, sector entre otros y se tiene como hipotesis al final reconocer si tiene o no '
+                           'tiene gestión del conocimiento formal.',
                            className="card-text"),
                     html.Br( ),
                     html.H2('¿Qué proceso realiza KTmat?', className="card-subtitle"),
@@ -171,10 +181,6 @@ class Description:
                            'osteriormente evaluar por medio del algoritmo de machine learning llamada Maquina de vectores'
                            ' de soporte si la empresa tiene o no gestión del conocimiento y si las variables generan un '
                            'patrón definido.', className="card-text"),
-                    html.Br( ),
-                    html.H2('¿En que información se basa KTmat?', className="card-subtitle"),
-                    html.P('KTmat se basa en un conjunto de variables',
-                           className="card-text"),
                 ])]
             )
         ], color="info", inverse=True, style={"width": "100%", 'marginTop': '30px', 'justify': 'center'}, )
@@ -189,13 +195,35 @@ class Description:
                 [html.Div([
                     html.H1('Como usar KtMath', className="card-title"),
                     html.Br( ),
-                    html.Ol('1. Selecciona una de las dos pestañas para analizar los datos, se recomienda comenzar con '
-                            '"Cuál es la estadística?" y posteriormente con "Algoritmo SVM"'),
-                    html.Ol(
-                        '2. Cargue un archivo en formato .csv que cumpla con las condiciones en la barra de carga para la'
-                        'pestaña seleccionada'),
-                    html.Ol('3. analice las graficas y tablas de acuerdo a los tips'),
-                    html.Ol('4. Seleccione las distintas variables en pares de su archivo para analizar el comportamiento'),
+                    dbc.Row([
+                        dbc.Col([
+                                html.Ol('1. Tener el archivo de datos para cargar (Consolidado de encuestas) '),
+                                html.Br( ),
+                                #html.Link('aqui',href='https://drive.google.com/file/d/1T9I_a7RD_mVlogGp8Jv5lxMPJ4QyHiKw/view?usp'
+                                 #                     '=sharing'),
+                                html.Img(src="../assets/archivoejem.png", style={'height':'70%', 'width':'70%'}),
+                                html.Br( ),
+                            ]),dbc.Col([
+                                html.Ol('2. Selecciona una de las dos pestañas para analizar los datos, se recomienda comenzar con '
+                                        '"Cuál es la estadística?" y posteriormente con "Algoritmo SVM"'),
+                                html.Br( ),
+                                html.Img(src="../assets/seleccion_opciones.png", style={'height':'30%', 'width':'100%'}),
+                            ]),
+                    ]),dbc.Row([
+                        dbc.Col([
+                            html.Br( ),
+                            html.Ol(
+                                '3. Cargue el archivo del paso 1 en formato .csv que cumpla con las condiciones en la barra de carga para la '
+                                'pestaña seleccionada'),
+                            html.Br( ),
+                            html.Img(src="../assets/cargar_archivo.png",style={'height':'70%', 'width':'70%'}),
+                            ]),dbc.Col([
+                                html.Br( ),
+                                html.Ol('4. Analice las gráficas y tablas de acuerdo a los tips. Sígalos en orden descendente'),
+
+                                html.Ol('5. Seleccione las distintas variables en pares de su archivo para analizar el comportamiento'),
+                            ]),
+                    ]),
                     html.Br( ),
                     html.H3('Archivo base', className="card-subtitle"),
                     html.Br( ),
@@ -207,6 +235,8 @@ class Description:
                         'Las otras filas serán los resultados de la encuesta realizada donde cada columna tendrá valores de 0 a 5'
                         'excepto en la ultima columna que tendrá valores entre SI, No, No sé, como se muestra en la imagen',
                         className="card-text"),
+                    html.Br( ),
+                    html.Img(src="../assets/variables.png", style={'height': '50%', 'width': '50%'}),
                     html.Br( ),
                     html.H3('Pestaña ¿Cuál es la estadística?', className="card-subtitle"),
                     html.P('En esta pestaña existen 3 tipos de gráficas y una tabla de frecuencia.',

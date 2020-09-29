@@ -110,11 +110,11 @@ def update_svm_graph(kernel,
     initialization( )
     # data = DataModel( )  #  se inicializa en el controller las variables de dataFrames y titulos con lo que llega al update
     df_X = initialization.df_SVM_data  # se llama al al dataFrame que se encuentra inicializado
-    print(df_X.iloc[:,[0,14]])
+    print(df_X.iloc[:, [0, 14]])
     if titleX and titleX2 in df_X.columns and not df_X.index.empty:
         logging.info("Entró al def_X en svm callback")
         y = df_X.iloc[:, -1]
-        X = df_X.loc[:,[titleX,titleX2]]
+        X = df_X.loc[:, [titleX, titleX2]]
     else:
         logging.info("No entro al def_X en svm callback, se ingresa al ejemplo dataset_moons")
         dataset = datasets.make_moons(
@@ -139,7 +139,7 @@ def update_svm_graph(kernel,
     y_max = X[:, -1].max( ) + .5
 
     xx, yy = np.meshgrid(np.arange(x_min1, x_max1, h),
-                             np.arange(y_min, y_max, h))
+                         np.arange(y_min, y_max, h))
 
     C = C_coef * 10 ** C_power
     gamma = gamma_coef * 10 ** gamma_power
@@ -219,7 +219,7 @@ def update_svm_graph(kernel,
                 html.Div(
                     [
                         dbc.Button(
-                            "Tips",
+                            "Tips 3",
                             id="collapse-button_confusion-matrix",
                             className="mb-3",
                             color="primary",
@@ -281,7 +281,17 @@ def toggle_collapse_confusion_matrix(n, is_open):
     [State("collapse_tips_variables", "is_open")]
 )
 def toggle_collapse_kernel(n, is_open):
-    print("isopen", is_open)
+    if n:
+        return not is_open
+    return is_open
+
+
+@app.callback(
+    Output("collapse_tips_params", "is_open"),
+    [Input("collapse_button_params", "n_clicks")],
+    [State("collapse_tips_params", "is_open")]
+)
+def toggle_collapse_params(n, is_open):
     if n:
         return not is_open
     return is_open

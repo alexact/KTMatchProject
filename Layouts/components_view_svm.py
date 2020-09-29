@@ -130,23 +130,24 @@ def card_dropdown():
         html.Div(
             [
                 dbc.Button(
-                    "Tips",
+                    "Tips 1",
                     id="collapse-button_variables",
                     className="mb-3",
                     color="primary",
                 ),
                 dbc.Collapse(
-                    dbc.Card(dbc.CardBody("Las variables X son las que definen la clasificación"
-                                          " y la variable Y es el resultado de la clasificación. "
+                    dbc.Card(dbc.CardBody("Las variables <<X>> son las que definen la clasificación"
+                                          "La variable <<Y>> es el resultado de la clasificación:"
+                                          " Si tiene o no tiene gestión del conocimiento formal. "
                                           "El algoritmo SVM de acuerdo al comportamiento de los datos de entrada "
-                                          "intentará predecir para siguientes registros si con los datos de las "
-                                          "variables x el resultado de la variable Y es de 0 a 5")),
+                                          "intentará predecir para el último registros si con los datos de las "
+                                          "variables <<X>> el resultado de la variable Y es de Si o No")),
                     id="collapse_tips_variables",
                 ),
             ]
         ),
         NamedDropdown(
-            name='Selecciona la variable X ',
+            name='Selecciona una variable dependiente(X)',
             id='dropdown-svm-parameter-X',
             options=sts_controller.titles_dropdown_svm,
             value=sts_controller.titles_dropdown_svm[0]['value'],
@@ -154,7 +155,7 @@ def card_dropdown():
             searchable=False
         ),
         NamedDropdown(
-            name='Seleccione la variable Y a predecir',
+            name='Selecciona una variable dependiente(X)',
             id='dropdown-svm-parameter-Y',
             options=StController().titles_dropdown_svm,
             value=StController().titles_dropdown_svm[1]['value'],
